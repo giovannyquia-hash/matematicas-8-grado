@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Matemáticas · 8.º grado | Ejercicios</title>
+<style>
+  :root{
+    --nav:#ffffff;
+    --ink:#1c2340;
+    --accent:#3a64ff;
+    --accent-soft:#eef3ff;
+    --line:#e4e8f2;
+    --muted:#6b7280;
+    --chip:#f3f5fb;
+    --panel:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:#f6f8fc;color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1020px;margin:0 auto;padding:0 20px}
+
+  /* ---------------- Header ---------------- */
+  .topbar{background:var(--nav);border-bottom:1px solid var(--line)}
+  .topbar .wrap{height:64px;display:flex;align-items:center;gap:24px}
+  .brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800;letter-spacing:-.5px}
+  .brand .cube{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#3a64ff,#7a44ff);color:#fff;display:grid;place-items:center;font-size:19px;font-weight:900}
+  .navlinks{display:flex;gap:22px;font-weight:600}
+  .navlinks a{color:var(--ink);padding:4px 0;border-bottom:3px solid transparent}
+  .navlinks a.on{border-color:var(--accent);color:var(--accent)}
+  .navactions{margin-left:auto;display:flex;gap:10px;align-items:center}
+  .btn{padding:9px 16px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn.ghost{border:2px solid var(--ink);background:#fff;color:var(--ink)}
+  .btn.solid{border:2px solid var(--accent);background:var(--accent);color:#fff}
+
+  /* ---------------- Hero ---------------- */
+  .hero{background:var(--nav);border-bottom:1px solid var(--line)}
+  .hero .wrap{padding:34px 20px 26px}
+  .crumbs{font-size:13px;color:var(--muted);margin-bottom:8px}
+  h1{font-size:34px;letter-spacing:-1px;margin-bottom:6px}
+  .intro{max-width:820px;color:#3a4363;font-size:15px}
+  .intro p+p{margin-top:8px}
+
+  /* ---------------- Grade strip ---------------- */
+  .grades{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .grade{min-width:46px;text-align:center;padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:var(--panel);font-weight:700;font-size:14px;color:var(--ink);cursor:pointer;transition:.15s}
+  .grade small{display:block;font-size:10px;font-weight:600;color:var(--muted)}
+  .grade.sel{border-color:var(--accent);background:var(--accent-soft);color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .grade.sel small{color:var(--accent)}
+
+  /* ---------------- Search ---------------- */
+  .searchbox{margin:26px 0 6px}
+  .searchbox input{
+    width:100%;padding:13px 16px;border:1px solid var(--line);border-radius:10px;font-size:15px;
+    background:var(--panel);font-family:inherit;outline:none;transition:border .15s, box-shadow .15s;
+  }
+  .searchbox input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(58,100,255,.12)}
+  .resultcount{font-size:13px;color:var(--muted);margin:8px 2px 0}
+
+  /* ---------------- Skills ---------------- */
+  .skills{gap:18px;display:flex;flex-direction:column;margin:18px 0 60px}
+  .cat{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;box-shadow:0 1px 2px rgba(16,24,64,.04)}
+  .cat-head{display:flex;align-items:center;gap:14px;padding:16px 20px;border-left:6px solid var(--cc)}
+  .cat-letter{width:38px;height:38px;border-radius:50%;background:var(--cc);color:#fff;display:grid;place-items:center;font-weight:900;font-size:18px;flex:0 0 auto}
+  .cat-head h2{font-size:19px;letter-spacing:-.3px}
+  .cat-head .count{font-size:12px;color:var(--muted);font-weight:600}
+  .cat-skills{list-style:none}
+  .skill{
+    position:relative;display:flex;align-items:center;gap:14px;padding:11px 20px;
+    border-top:1px solid var(--line);cursor:pointer;transition:background .12s;
+  }
+  .skill:hover{background:#f7f9ff}
+  .skill.sel{background:var(--accent-soft)}
+  .skill-code{flex:0 0 52px;font-size:12px;font-weight:800;color:var(--cc);letter-spacing:.4px}
+  .skill-name{flex:1;font-size:15px;color:var(--ink)}
+  .hint{font-size:12px;font-weight:700;color:var(--accent);opacity:0;transition:opacity .12s}
+  .skill:hover .hint{opacity:1}
+
+  /* Popover pregunta de ejemplo */
+  .pop{
+    position:absolute;left:60%;top:-8px;width:300px;background:var(--panel);border:1px solid var(--line);
+    border-radius:12px;box-shadow:0 12px 34px rgba(16,24,64,.16);padding:14px 16px;z-index:20;
+    opacity:0;pointer-events:none;transform:translateY(4px);transition:.16s;
+  }
+  .skill:hover .pop{opacity:1;pointer-events:auto;transform:translateY(0)}
+  .pop .q-label{font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+  .pop .q{font-size:14px;color:var(--ink);font-weight:600;margin-bottom:10px}
+  .pop .answers{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .pop .ans{border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px;font-weight:600;color:var(--ink);text-align:center}
+  .pop .ans.ok{border-color:#22c55e;background:#ecfdf3;color:#15803d}
+  .pop .caret{position:absolute;left:-6px;top:18px;width:12px;height:12px;background:var(--panel);border-left:1px solid var(--line);border-bottom:1px solid var(--line);transform:rotate(45deg)}
+  @media(max-width:640px){
+    .navlinks,.hint{display:none}
+    .pop{position:fixed;left:50%;top:auto;bottom:14px;width:calc(100% - 32px);transform:translateX(-50%);left:16px;margin:0}
+    .pop .caret{display:none}
+    .skill.sel .pop{transform:translateX(0)}
+  }
+
+  /* ---------------- Vistas ---------------- */
+  .view[hidden]{display:none}
+  .placeholder{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:44px 28px;margin:24px 0 60px;text-align:center}
+  .placeholder .big{font-size:42px;margin-bottom:10px}
+  .placeholder h2{font-size:22px;margin-bottom:8px}
+  .placeholder p{color:var(--muted);max-width:560px;margin:0 auto 18px}
+
+  /* ---------------- Modal ---------------- */
+  .modal{position:fixed;inset:0;background:rgba(16,22,48,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:100;opacity:0;pointer-events:none;transition:opacity .18s}
+  .modal.open{opacity:1;pointer-events:auto}
+  .modal-card{background:#fff;border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow:auto;box-shadow:0 24px 60px rgba(0,0,0,.3);transform:translateY(8px);transition:transform .18s}
+  .modal.open .modal-card{transform:translateY(0)}
+  .modal-head{display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--line)}
+  .modal-head h3{font-size:19px;flex:1}
+  .modal-x{border:none;background:#eef0f6;width:34px;height:34px;border-radius:50%;font-size:20px;cursor:pointer;line-height:1;color:var(--ink)}
+  .modal-body{padding:22px}
+  .modal-foot{display:flex;gap:10px;justify-content:flex-end;padding:0 22px 20px}
+
+  /* Practica */
+  .prac-q{font-size:18px;font-weight:700;margin-bottom:6px}
+  .prac-sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+  .prac-ans{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  @media(max-width:520px){.prac-ans{grid-template-columns:1fr}}
+  .prac-ans button{border:2px solid var(--line);background:#fff;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--ink);transition:.12s}
+  .prac-ans button:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .prac-ans button.good{border-color:#22c55e;background:#ecfdf3;color:#15803d}
+  .prac-ans button.bad{border-color:#ef4444;background:#fef2f2;color:#b91c1c}
+  .prac-ans button:disabled{cursor:default}
+  .prac-fb{font-weight:700;margin-bottom:14px;min-height:20px}
+  .prac-fb.good{color:#15803d}
+  .prac-fb.bad{color:#b91c1c}
+
+  /* Score */
+  .scorebar{display:flex;gap:10px;align-items:center;margin-top:14px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+  .scorepill{background:#ecfdf3;color:#15803d;border:1px solid #bbf7d0;border-radius:999px;padding:4px 12px;font-weight:800}
+
+  /* Login form */
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:13px;font-weight:700;margin-bottom:5px}
+  .field input{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:9px;font-size:15px;font-family:inherit;outline:none}
+  .field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(58,100,255,.12)}
+
+  /* Planes */
+  .plan{display:flex;justify-content:space-between;align-items:center;border:2px solid var(--line);border-radius:12px;padding:16px;margin-bottom:10px;cursor:pointer}
+  .plan:hover,.plan.sel{border-color:var(--accent);background:var(--accent-soft)}
+  .plan .price{font-size:22px;font-weight:900;color:var(--accent)}
+  .plan small{display:block;color:var(--muted);font-weight:600}
+
+  /* Toast */
+  .toast-wrap{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;z-index:200;align-items:center;pointer-events:none}
+  .toast{background:#141a33;color:#fff;padding:11px 18px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.28);opacity:0;transform:translateY(10px);transition:.2s}
+  .toast.show{opacity:1;transform:translateY(0)}
+
+  /* ---------------- Footer ---------------- */
+  footer{background:#141a33;color:#b9c2da;font-size:13px;margin-top:20px}
+  footer .wrap{padding:34px 20px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  footer a{color:#e6ebff}
+  footer .foot-links{display:flex;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand"><div class="cube">8</div> Matemáticas</div>
+    <nav class="navlinks">
+      <a class="on" href="#" data-view="math">Matemáticas</a>
+      <a href="#" data-view="rewards">Recompensas</a>
+      <a href="#" data-view="analytics">Analítica</a>
+      <a href="#" data-view="discover">Descubre</a>
+    </nav>
+    <div class="navactions">
+      <button class="btn ghost" type="button" id="loginBtn">Iniciar sesión</button>
+      <button class="btn solid" type="button" id="subBtn">Suscríbete</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="crumbs">Matemáticas › 8.º grado</div>
+    <h1>8.º grado</h1>
+    <div class="intro">
+      <p>Aquí tienes una lista de las competencias de matemáticas para los estudiantes en 8.º grado. Estas competencias están clasificadas en categorías: sitúa el cursor sobre el nombre de una competencia para ver una pregunta de ejemplo. Para empezar a practicar, solo tienes que hacer clic en el enlace que quieras. IXL llevará un seguimiento de tus puntuaciones y las preguntas irán aumentando de dificultad según vayas mejorando.</p>
+      <p>Aquí tienes una lista de las competencias de matemáticas para los estudiantes en 8.º grado. Para empezar a practicar, solo tienes que hacer clic en el enlace que quieras.</p>
+    </div>
+    <div class="grades" id="grades"></div>
+  </div>
+</section>
+
+<main class="wrap view" id="view-math">
+  <div class="searchbox">
+    <input id="search" type="search" placeholder="Buscar una competencia (ej. Pitágoras, porcentaje, ángulos…)">
+  </div>
+  <div class="resultcount" id="rc"></div>
+  <div class="scorebar">
+    <span>Tu puntuación:</span>
+    <span class="scorepill" id="scorePill">0 / 0</span>
+    <button class="btn ghost" type="button" id="resetScore" style="padding:5px 12px">Reiniciar</button>
+  </div>
+  <div class="skills" id="skills"></div>
+</main>
+
+<main class="wrap view" id="view-rewards" hidden>
+  <div class="placeholder">
+    <div class="big">★</div>
+    <h2>Recompensas</h2>
+    <p>Gana medallas y premios a medida que dominas competencias. Completa preguntas correctas en la sección de Matemáticas para llenar tu tablero.</p>
+    <button class="btn solid" type="button" data-goto="math">Ir a practicar</button>
+  </div>
+</main>
+
+<main class="wrap view" id="view-analytics" hidden>
+  <div class="placeholder">
+    <div class="big">◈</div>
+    <h2>Analítica</h2>
+    <p>Consulta tu progreso por categoría. Cada respuesta correcta que aciertes se refleja en tu puntuación.</p>
+    <div class="scorebar" style="justify-content:center">
+      <span class="scorepill" id="scorePill2">0 / 0</span>
+    </div>
+    <button class="btn solid" type="button" data-goto="math" style="margin-top:14px">Ir a practicar</button>
+  </div>
+</main>
+
+<main class="wrap view" id="view-discover" hidden>
+  <div class="placeholder">
+    <div class="big">◆</div>
+    <h2>Descubre Matemáticas de 8.º grado</h2>
+    <p>17 categorías y 144 competencias: desde números enteros y el teorema de Pitágoras hasta funciones, sistemas de ecuaciones y probabilidad.</p>
+    <button class="btn solid" type="button" data-goto="math">Ver todas las competencias</button>
+  </div>
+</main>
+
+<main class="wrap view" id="view-grade" hidden>
+  <div class="placeholder">
+    <div class="big" id="gradeBig">8.º</div>
+    <h2 id="gradeTitle"></h2>
+    <p>Esta demostración incluye únicamente el contenido de <b>8.º grado</b>. Las demás páginas de grado no están disponibles aquí.</p>
+    <button class="btn solid" type="button" data-goto="math">Volver a 8.º grado</button>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 · Ejercicios de matemáticas · 8.º grado. Todos los derechos reservados.</div>
+    <div class="foot-links">
+      <a href="#">Centro de ayuda</a><a href="#">Danos tu opinión</a><a href="#">Privacidad</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal" id="modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="modalTitle">Título</h3>
+      <button class="modal-x" type="button" id="modalX" aria-label="Cerrar">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<script>
+"use strict";
+
+const GRADES = ["P","1","2","3","4","5","6","7","8"];
+
+// Cada categoría tiene su color (barra/letra/indicador) y sus competencias.
+const CATS = [
+ {letter:"A", color:"#e65c2a", title:"Números enteros", skills:[
+   {c:"A.1", t:"Factores", q:"¿Cuáles son todos los factores de 24?", a:["1,2,3,4,6,8,12,24","2,4,6,8,12,24","1,2,3,4,6,8,12","1,24,12,6"], ok:0},
+   {c:"A.2", t:"Máximo común divisor", q:"Halla el máximo común divisor de 12 y 18.", a:["3","6","9","36"], ok:1},
+   {c:"A.3", t:"Agrupar factores de expresiones numéricas", q:"Agrupa: 4 × 25 = 2 × ( ? × 25 ).", a:["2","4","10","5"], ok:0},
+   {c:"A.4", t:"Graficar números enteros en rectas numéricas horizontales y verticales", q:"Ubica −3 en la recta numérica.", a:["Entre −4 y −2","Entre 2 y 4","En el 3","En el −3"], ok:3},
+   {c:"A.5", t:"Comparar y ordenar números enteros", q:"Ordena de menor a mayor: −5, 2, −1, 0.", a:["−5,−1,0,2","0,−1,2,−5","2,0,−1,−5","−1,0,−5,2"], ok:0},
+   {c:"A.6", t:"Sumar y restar números enteros", q:"−8 + 5 = ?", a:["−13","−3","3","13"], ok:1},
+   {c:"A.7", t:"Multiplicar y dividir números enteros", q:"−6 × 4 = ?", a:["−24","24","−10","10"], ok:0},
+   {c:"A.8", t:"Evaluar expresiones numéricas con números enteros", q:"3 − (−2)² = ?", a:["7","−1","1","−7"], ok:1}
+ ]},
+ {letter:"B", color:"#b747d8", title:"Exponentes, raíces cuadradas y raíces cúbicas", skills:[
+   {c:"B.1", t:"Exponentes con bases negativas", q:"(−3)² = ?", a:["−9","9","−6","6"], ok:1},
+   {c:"B.2", t:"Multiplicación con exponentes", q:"2³ × 2⁴ = ?", a:["2⁷","2¹²","4¹²","2¹"], ok:0},
+   {c:"B.3", t:"División con exponentes", q:"5⁶ ÷ 5² = ?", a:["5¹²","5³","5⁴","10⁸"], ok:2},
+   {c:"B.4", t:"Multiplicación y división con exponentes", q:"4² × 4³ ÷ 4 = ?", a:["4⁶","4⁴","4⁵","4⁹"], ok:1},
+   {c:"B.5", t:"Identificar expresiones equivalentes con exponentes I", q:"¿Es verdadero que 3² = 9?", a:["Sí","No"], ok:0},
+   {c:"B.6", t:"Identificar expresiones equivalentes con exponentes II", q:"¿Son equivalentes 2⁴ y 4²?", a:["Sí","No"], ok:0},
+   {c:"B.7", t:"Notación científica en la calculadora", q:"Escribe 3.2E7 en notación científica.", a:["3.2×10⁷","3.2×10⁸","32×10⁶","0.32×10⁸"], ok:0},
+   {c:"B.8", t:"Sumar y restar números escritos en notación científica", q:"2×10⁴ + 3×10⁴ = ?", a:["5×10⁴","6×10⁸","5×10⁸","50×10⁴"], ok:0},
+   {c:"B.9", t:"Raíces cuadradas de cuadrados perfectos", q:"√81 = ?", a:["9","8","41","40"], ok:0},
+   {c:"B.10", t:"Raíces cuadradas positiva y negativa", q:"Resuelve: ±√49 = ?", a:["±7","7 y 7","±49","±6"], ok:0}
+ ]},
+ {letter:"C", color:"#e0457b", title:"Números racionales e irracionales", skills:[
+   {c:"C.1", t:"Escribir fracciones en su mínima expresión", q:"Simplifica 8/12.", a:["2/3","4/6","3/4","2/4"], ok:0},
+   {c:"C.2", t:"Convertir números decimales periódicos en fracciones y viceversa", q:"0,333… se escribe como:", a:["1/3","3/10","1/9","3/3"], ok:0},
+   {c:"C.3", t:"Convertir números decimales en fracciones o números mixtos y viceversa", q:"Escribe 0,75 como fracción irreducible.", a:["3/4","75/10","7/8","1/75"], ok:0},
+   {c:"C.4", t:"Ordenar números racionales", q:"Ordena de menor a mayor: 3/4, 0,6 y 2/3.", a:["0,6; 2/3; 3/4","2/3; 0,6; 3/4","3/4; 2/3; 0,6","0,6; 3/4; 2/3"], ok:0},
+   {c:"C.5", t:"Aplicar las reglas de la suma y la resta", q:"−1/2 + 3/4 = ?", a:["1/4","2/6","5/4","−1/4"], ok:0},
+   {c:"C.6", t:"Aplicar las reglas de la multiplicación y la división", q:"2/3 ÷ 4/9 = ?", a:["3/2","8/27","1/2","18/12"], ok:0},
+   {c:"C.7", t:"Aplicar las reglas de la suma, la resta, la multiplicación y la división", q:"3/4 × (1/2 + 1/4) = ?", a:["9/16","3/8","5/16","9/8"], ok:0},
+   {c:"C.8", t:"Evaluar expresiones numéricas con números racionales", q:"1/2 + 1/3 × 6 = ?", a:["2 1/2","3","2","4 1/2"], ok:0},
+   {c:"C.9", t:"Identificar raíces cuadradas racionales e irracionales", q:"¿√2 es un número racional?", a:["No, es irracional","Sí, es racional","Solo a veces","Es entero"], ok:0},
+   {c:"C.10", t:"Números irracionales en rectas numéricas", q:"¿Dónde está √2 en la recta numérica?", a:["Entre 1 y 2","Entre 0 y 1","Entre 2 y 3","Exactamente en 2"], ok:0}
+ ]},
+ {letter:"D", color:"#0ea5a5", title:"Razones, tasas, porcentajes y proporciones", skills:[
+   {c:"D.1", t:"Identificar razones equivalentes", q:"¿Es 6 : 8 equivalente a 3 : 4?", a:["Sí","No"], ok:0},
+   {c:"D.2", t:"Escribir una razón equivalente", q:"Completa: 2/5 = ? / 20.", a:["8","10","6","5"], ok:0},
+   {c:"D.3", t:"¿Las razones forman una proporción?", q:"¿Forman una proporción 4/6 y 6/10?", a:["No","Sí"], ok:0},
+   {c:"D.4", t:"Identificar relaciones proporcionales a partir de gráficas y ecuaciones", q:"¿La gráfica lineal que pasa por el origen es proporcional?", a:["Sí","No"], ok:0},
+   {c:"D.5", t:"Identificar relaciones proporcionales a partir de tablas", q:"¿La tabla con y = 3x es proporcional?", a:["Sí","No"], ok:0},
+   {c:"D.6", t:"Escribir ecuaciones de variación directa", q:"Escribe la variación directa con k = 3.", a:["y = 3x","y = x + 3","y = x/3","y = 3/x"], ok:0},
+   {c:"D.7", t:"Escribir y resolver ecuaciones de variación directa", q:"Si y = 3x, halla y cuando x = 7.", a:["21","10","7","28"], ok:0},
+   {c:"D.8", t:"Convertir entre porcentajes, fracciones y números decimales", q:"Convierte 25% a decimal y a fracción.", a:["0,25 y 1/4","2,5 y 1/40","0,25 y 25/1000","0,025 y 1/4"], ok:0},
+   {c:"D.9", t:"Resolver ecuaciones de porcentaje", q:"¿Qué número es el 20% de 250?", a:["50","25","20","75"], ok:0},
+   {c:"D.10", t:"Convertir tasas y medidas: unidades métricas", q:"5 km = ? m", a:["5000","500","50","50000"], ok:0}
+ ]},
+ {letter:"E", color:"#e0a91e", title:"Figuras bidimensionales", skills:[
+   {c:"E.1", t:"Repaso del plano de coordenadas", q:"¿En qué cuadrante está el punto (3, −2)?", a:["Cuadrante IV","Cuadrante III","Cuadrante I","Cuadrante II"], ok:0},
+   {c:"E.2", t:"Clasificar cuadriláteros II", q:"Un cuadrilátero con 4 lados iguales y ángulos rectos es un:", a:["Cuadrado","Rombo","Rectángulo","Trapecio"], ok:0},
+   {c:"E.3", t:"Graficar triángulos y cuadriláteros", q:"Grafica el triángulo con vértices (1,1), (1,4) y (5,1).", a:["(0,1) y (5,1)","(1,1) y (5,1)","(1,5) y (5,1)","(1,2) y (5,1)"], ok:1},
+   {c:"E.4", t:"Teorema de la suma de los ángulos de un triángulo", q:"x + 60° + 80° = 180° → x = ?", a:["40°","20°","60°","50°"], ok:0},
+   {c:"E.5", t:"Encontrar las medidas de ángulos complementarios, suplementarios, opuestos por el vértice y adyacentes", q:"Si un ángulo mide 35°, ¿cuánto mide su complemento?", a:["55°","145°","35°","90°"], ok:0},
+   {c:"E.6", t:"Escribir y resolver ecuaciones usando las relaciones entre los ángulos", q:"x + 2x = 90° → x = ?", a:["30°","45°","60°","15°"], ok:0},
+   {c:"E.7", t:"Partes de un círculo", q:"El segmento del centro a un punto de la circunferencia se llama:", a:["Radio","Diámetro","Cuerda","Arco"], ok:0}
+ ]},
+ {letter:"F", color:"#3e7bf8", title:"Transformaciones y congruencia", skills:[
+   {c:"F.1", t:"Simetría axial", q:"¿Un cuadrado tiene eje de simetría?", a:["Sí","No"], ok:0},
+   {c:"F.2", t:"Identificar reflexiones, rotaciones y traslaciones", q:"Deslizar la figura sin girarla es una:", a:["Traslación","Rotación","Reflexión","Dilatación"], ok:0},
+   {c:"F.3", t:"Traslaciones: graficar la imagen", q:"Traslada el punto 3 unidades a la derecha: (2,4) → ?", a:["(5,4)","(2,7)","(6,4)","(5,7)"], ok:0},
+   {c:"F.4", t:"Traslaciones: encontrar las coordenadas", q:"Traslada A(2,3) con la regla (x+1, y−2).", a:["(3,1)","(1,5)","(3,5)","(1,1)"], ok:0},
+   {c:"F.5", t:"Reflexiones sobre los ejes x e y: graficar la imagen", q:"Refleja (3,2) sobre el eje y.", a:["(−3,2)","(3,−2)","(−3,−2)","(2,3)"], ok:0},
+   {c:"F.6", t:"Reflexiones sobre los ejes x e y: encontrar las coordenadas", q:"Refleja (−4,5) sobre el eje x.", a:["(−4,−5)","(4,5)","(4,−5)","(−5,4)"], ok:0},
+   {c:"F.7", t:"Reflexiones: graficar la imagen", q:"Refleja la figura sobre la recta x = 1.", a:["Ver imagen","No cambia","Rota 90°","Traslada"], ok:0},
+   {c:"F.8", t:"Reflexiones: encontrar las coordenadas", q:"¿Cuál es la imagen de (6,−1) al reflejarla sobre el eje y?", a:["(−6,−1)","(6,1)","(−6,1)","(1,6)"], ok:0},
+   {c:"F.9", t:"Rotaciones: graficar la imagen", q:"Rota el punto 90° en sentido horario alrededor del origen.", a:["Ver imagen","Rota 180°","No cambia","Traslada"], ok:0},
+   {c:"F.10", t:"Rotaciones: encontrar las coordenadas", q:"Rota (3,4) 180° alrededor del origen.", a:["(−3,−4)","(3,−4)","(−3,4)","(4,3)"], ok:0},
+   {c:"F.11", t:"Secuencias de transformaciones de congruencia: graficar la imagen", q:"Aplica traslación y luego reflexión a la figura.", a:["Ver imagen","No cambia","Solo traslada","Solo refleja"], ok:0},
+   {c:"F.12", t:"Identificar figuras congruentes", q:"Dos figuras con el mismo tamaño y forma son:", a:["Congruentes","Semejantes","Equivalentes","Simétricas"], ok:0}
+ ]},
+ {letter:"G", color:"#16a34a", title:"Transformaciones y semejanza", skills:[
+   {c:"G.1", t:"Figuras semejantes y congruentes", q:"Dos figuras con la misma forma pero distinto tamaño son:", a:["Semejantes","Congruentes","Iguales","Trasladadas"], ok:0},
+   {c:"G.2", t:"Dilataciones: graficar la imagen", q:"Dilata la figura con factor de escala 2.", a:["Ver imagen","No cambia","Rota","Traslada"], ok:0},
+   {c:"G.3", t:"Dilataciones: encontrar las coordenadas", q:"Dilata (2,3) con factor 3.", a:["(6,9)","(5,6)","(6,3)","(2,9)"], ok:0},
+   {c:"G.4", t:"Dilataciones: encontrar el factor de escala", q:"De (2,4) a (6,12), el factor es:", a:["3","2","4","1/3"], ok:0},
+   {c:"G.5", t:"Identificar triángulos semejantes", q:"Dos triángulos con ángulos iguales son siempre:", a:["Semejantes","Congruentes","Rectángulos","Equiláteros"], ok:0},
+   {c:"G.6", t:"Criterio de semejanza de triángulos ángulo-ángulo", q:"¿Dos ángulos iguales bastan para la semejanza (AA)?", a:["Sí","No"], ok:0}
+ ]},
+ {letter:"H", color:"#7c3aed", title:"Teorema de Pitágoras", skills:[
+   {c:"H.1", t:"Teorema de Pitágoras: encontrar la longitud de la hipotenusa", q:"Si a=3 y b=4, ¿c = ?", a:["5","7","12","6"], ok:0},
+   {c:"H.2", t:"Teorema de Pitágoras: encontrar la longitud del cateto que falta", q:"Si c=10 y a=6, ¿b = ?", a:["8","7","14","9"], ok:0},
+   {c:"H.3", t:"Teorema de Pitágoras: encontrar la longitud del cateto que falta o de la hipotenusa", q:"¿Cuál es la medida que falta en el triángulo? 5 y 12 → c.", a:["13","17","11","15"], ok:0},
+   {c:"H.4", t:"Teorema de Pitágoras: encontrar el perímetro", q:"Perímetro del triángulo de lados 3, 4 y c.", a:["12","7","24","10"], ok:0}
+ ]},
+ {letter:"I", color:"#fb7a1e", title:"Medidas geométricas", skills:[
+   {c:"I.1", t:"Perímetro", q:"Perímetro de un rectángulo de 4 por 7.", a:["22","28","11","56"], ok:0},
+   {c:"I.2", t:"Área", q:"Área de un triángulo con base 6 y altura 9.", a:["27","54","15","36"], ok:0},
+   {c:"I.3", t:"Área y circunferencia de los círculos", q:"Círculo con r=3. Área = ?", a:["9π","6π","3π","18π"], ok:0},
+   {c:"I.4", t:"Área y perímetro de los semicírculos y los cuartos de círculo", q:"Perímetro de un semicírculo con r=2.", a:["2π+4","4π+2","2π","4π"], ok:0},
+   {c:"I.5", t:"Desarrollos planos de figuras tridimensionales", q:"¿Qué sólido forma este desarrollo?", a:["Cubo","Esfera","Cono","Cilindro"], ok:0},
+   {c:"I.6", t:"Volumen de los cubos, los prismas y las pirámides", q:"Volumen de un prisma de 3×4×5.", a:["60","35","12","47"], ok:0},
+   {c:"I.7", t:"Área de superficie de los cubos, los prismas y las pirámides", q:"Superficie de un cubo de lado 3.", a:["54","27","36","18"], ok:0},
+   {c:"I.8", t:"Volumen de los cilindros", q:"V = πr²h. Con r=2 y h=5, V = ?", a:["20π","10π","40π","25π"], ok:0},
+   {c:"I.9", t:"Volumen de los conos", q:"V = (1/3)πr²h. Con r=3 y h=9, V = ?", a:["27π","81π","9π","18π"], ok:0},
+   {c:"I.10", t:"Área de superficie de los cilindros", q:"A = 2πr(r+h). Con r=1 y h=4, A = ?", a:["10π","8π","4π","12π"], ok:0},
+   {c:"I.11", t:"Área de superficie de los conos", q:"A = πr(r+g). Con r=3 y g=5, A = ?", a:["24π","15π","45π","8π"], ok:0},
+   {c:"I.12", t:"Volumen de las esferas", q:"V = (4/3)πr³. Con r=3, V = ?", a:["36π","27π","108π","12π"], ok:0},
+   {c:"I.13", t:"Área de superficie de las esferas", q:"A = 4πr². Con r=2, A = ?", a:["16π","8π","32π","4π"], ok:0}
+ ]},
+ {letter:"J", color:"#0b86d8", title:"Expresiones y propiedades", skills:[
+   {c:"J.1", t:"Escribir expresiones variables: una operación", q:"Escribe: tres más un número.", a:["x + 3","3x","x − 3","x/3"], ok:0},
+   {c:"J.2", t:"Identificar términos y coeficientes", q:"En 5x − 2, el coeficiente es:", a:["5","x","−2","5x"], ok:0},
+   {c:"J.3", t:"Agrupar factores de expresiones variables", q:"Agrupa: 6x + 9 = 3( ? ).", a:["2x + 3","6x + 9","2x + 9","x + 3"], ok:0},
+   {c:"J.4", t:"Propiedades de la suma y la multiplicación", q:"3(x + y) = 3x + 3y. ¿Qué propiedad es?", a:["Distributiva","Conmutativa","Asociativa","Neutro"], ok:0},
+   {c:"J.5", t:"Escribir expresiones equivalentes usando propiedades", q:"¿2(x + 3) = 2x + 6?", a:["Sí","No"], ok:0},
+   {c:"J.6", t:"Sumar y restar términos semejantes", q:"3x + 5x = ?", a:["8x","15x","8x²","2x"], ok:0},
+   {c:"J.7", t:"Sumar y restar expresiones lineales", q:"(2x + 3) + (x − 1) = ?", a:["3x + 2","3x − 2","2x + 2","4x + 2"], ok:0}
+ ]},
+ {letter:"K", color:"#d9381e", title:"Ecuaciones de una variable", skills:[
+   {c:"K.1", t:"¿Qué valor de x satisface una ecuación?", q:"Prueba x=3 en 2x + 1 = 7.", a:["Sí, 7 = 7","No","Solo x=4","Falta información"], ok:0},
+   {c:"K.2", t:"Resolver ecuaciones de un paso", q:"x + 5 = 12 → x = ?", a:["7","17","−7","2.4"], ok:0},
+   {c:"K.3", t:"Resolver ecuaciones de dos pasos", q:"2x + 3 = 11 → x = ?", a:["4","7","5","8"], ok:0},
+   {c:"K.4", t:"Resolver ecuaciones de dos pasos: completar la solución", q:"Completa el paso: 2x = 8.", a:["x = 4","x = 6","x = 16","x = 8"], ok:0},
+   {c:"K.5", t:"Resolver ecuaciones con términos semejantes", q:"4x + 3x − 2 = 12 → x = ?", a:["2","3","14","4"], ok:0},
+   {c:"K.6", t:"Resolver ecuaciones con variables en ambos lados", q:"5x − 3 = 3x + 5 → x = ?", a:["4","8","−4","2"], ok:0},
+   {c:"K.7", t:"Resolver ecuaciones con variables en ambos lados: coeficientes fraccionarios", q:"(1/2)x + 1 = 3 → x = ?", a:["4","2","8","6"], ok:0},
+   {c:"K.8", t:"Resolver ecuaciones usando la propiedad distributiva", q:"3(x − 2) = 9 → x = ?", a:["5","1","3","−5"], ok:0},
+   {c:"K.9", t:"Resolver ecuaciones de varios pasos", q:"2(x + 3) + 4 = 14 → x = ?", a:["2","4","3","5"], ok:0},
+   {c:"K.10", t:"Resolver ecuaciones de varios pasos con coeficientes fraccionarios", q:"x/2 + x/3 = 5 → x = ?", a:["6","10","5","30"], ok:0},
+   {c:"K.11", t:"Resolver ecuaciones de varios pasos: completar la solución", q:"¿Qué paso sigue después de 2x = 10?", a:["Dividir entre 2","Sumar 2","Multiplicar por 2","Restar 10"], ok:0},
+   {c:"K.12", t:"Escribir ecuaciones sin solución o con infinitas soluciones", q:"¿Qué ecuación tiene infinitas soluciones?", a:["2x = 2x","2x = 3","x = x + 1","0x = 5"], ok:0}
+ ]},
+ {letter:"L", color:"#0aa24b", title:"Desigualdades de una variable", skills:[
+   {c:"L.1", t:"Graficar desigualdades en rectas numéricas", q:"Grafica x > 3.", a:["Abierto en 3, hacia la derecha","Cerrado en 3, hacia la izquierda","Abierto en 3, izquierda","Cerrado en 3, derecha"], ok:0},
+   {c:"L.2", t:"Escribir desigualdades a partir de rectas numéricas", q:"Recta con círculo abierto en −1 hacia la derecha:", a:["x > −1","x ≥ −1","x < −1","x ≤ −1"], ok:0},
+   {c:"L.3", t:"Resolver desigualdades de un paso", q:"x − 4 > 6 → x ?", a:["x > 10","x < 10","x > 2","x < 2"], ok:0},
+   {c:"L.4", t:"Resolver desigualdades de dos pasos", q:"2x + 1 ≤ 9 → x ≤ ?", a:["4","3","5","8"], ok:0},
+   {c:"L.5", t:"Resolver desigualdades de varios pasos", q:"3(x − 1) > 6 → x > ?", a:["3","2","1","9"], ok:0}
+ ]},
+ {letter:"M", color:"#00a2a5", title:"Ecuaciones lineales", skills:[
+   {c:"M.1", t:"Forma pendiente-intercepto: encontrar la pendiente y el intercepto en y", q:"En y = 2x + 3, la pendiente m = ?", a:["2","3","−2","1"], ok:0},
+   {c:"M.2", t:"Encontrar la pendiente a partir de una gráfica", q:"La recta sube 2 por cada 1 a la derecha. m = ?", a:["2","1/2","−2","2/1"], ok:0},
+   {c:"M.3", t:"Graficar una recta usando la pendiente", q:"Grafica con pendiente 2 y punto (1, 2).", a:["Ver imagen","Es vertical","Es horizontal","Sin datos"], ok:0},
+   {c:"M.4", t:"Graficar una recta a partir de una ecuación en forma pendiente-intercepto", q:"Grafica y = x − 1.", a:["Ver imagen","Pasa por (1,1)","Pasa por (0,0)","Es vertical"], ok:0},
+   {c:"M.5", t:"Graficar una recta a partir de una ecuación en forma punto-pendiente", q:"Grafica y − 2 = 3(x − 1).", a:["Ver imagen","Es vertical","Es horizontal","Sin datos"], ok:0},
+   {c:"M.6", t:"Escribir una ecuación lineal a partir de una pendiente y un punto", q:"Pendiente 3 y punto (2, 5). ¿Ecuación?", a:["y − 5 = 3(x − 2)","y = 2x − 5","y + 5 = 3(x + 2)","y = 3x + 5"], ok:0},
+   {c:"M.7", t:"Escribir una ecuación lineal a partir de dos puntos", q:"Puntos (1,3) y (3,7). Pendiente = ?", a:["2","3","1/2","4"], ok:0},
+   {c:"M.8", t:"Graficar una recta a partir de una ecuación en forma estándar", q:"Grafica 2x + y = 4.", a:["Ver imagen","Pasa por (2,0) y (0,4)","Pasa por (4,0)","Es vertical"], ok:1},
+   {c:"M.9", t:"Graficar una recta horizontal o vertical", q:"Grafica y = −2.", a:["Horizontal en −2","Vertical en −2","Pasa por el origen","Diagonal"], ok:0},
+   {c:"M.10", t:"Ecuaciones de rectas horizontales y verticales", q:"Una recta vertical que pasa por x = 3:", a:["x = 3","y = 3","y = x","x = y"], ok:0}
+ ]},
+ {letter:"N", color:"#6d28d9", title:"Funciones", skills:[
+   {c:"N.1", t:"Relacionar la gráfica de una ecuación con sus soluciones", q:"¿Pertenece (2, 5) a la gráfica de y = 2x + 1?", a:["Sí, 5 = 5","No","Falta información","No existe"], ok:0},
+   {c:"N.2", t:"Completar una tabla y graficar una función lineal", q:"y = 2x. Si x=3, y = ?", a:["6","5","9","3"], ok:0},
+   {c:"N.3", t:"Comparar funciones lineales: gráficas y ecuaciones", q:"¿Cuál crece más rápido: y = 2x o y = 5x?", a:["y = 5x","y = 2x","Iguales","No se puede"], ok:0},
+   {c:"N.4", t:"Comparar funciones lineales: tablas, gráficas y ecuaciones", q:"¿Qué función tiene mayor pendiente?", a:["La de mayor m","La de menor m","Todas","Ninguna"], ok:0},
+   {c:"N.5", t:"Identificar funciones lineales y no lineales: tablas", q:"Tabla: (1,2),(2,4),(3,8). ¿Es lineal?", a:["No","Sí"], ok:0},
+   {c:"N.6", t:"Encontrar valores usando gráficas de funciones", q:"En la gráfica, f(2) = 5. ¿Qué significa?", a:["Cuando x=2, y=5","Cuando y=2, x=5","El rango es 2","La pendiente es 5"], ok:0},
+   {c:"N.7", t:"Completar la tabla de una función usando una gráfica", q:"Lee la gráfica para completar la fila de x=4.", a:["Ver imagen","Falta dato","y=x","y=0"], ok:0},
+   {c:"N.8", t:"Dominio y rango de funciones", q:"Si y = 1/x, ¿x = 0 está en el dominio?", a:["No, indefinido","Sí","Solo a veces","Siempre"], ok:0}
+ ]},
+ {letter:"O", color:"#c026d3", title:"Sistemas de ecuaciones lineales", skills:[
+   {c:"O.1", t:"¿Es (x, y) una solución del sistema de ecuaciones?", q:"¿(1,2) es solución de x + y = 3?", a:["Sí","No"], ok:0},
+   {c:"O.2", t:"Resolver un sistema de ecuaciones graficando", q:"Resuelve graficando: y = x y y = 2.", a:["(2,2)","(0,0)","(1,1)","(2,1)"], ok:0},
+   {c:"O.3", t:"Encontrar el número de soluciones de un sistema de ecuaciones graficando", q:"Dos rectas paralelas tienen:", a:["0 soluciones","1 solución","Infinitas","2 soluciones"], ok:0},
+   {c:"O.4", t:"Clasificar un sistema de ecuaciones graficando", q:"Rectas que se cruzan en un punto:", a:["Independiente y consistente","Dependiente","Inconsistente","Paralelas"], ok:0},
+   {c:"O.5", t:"Resolver un sistema de ecuaciones por sustitución", q:"y = 2x y x + y = 9 → x = ?", a:["3","6","9","2"], ok:0},
+   {c:"O.6", t:"Resolver un sistema de ecuaciones por eliminación", q:"x + y = 5 y x − y = 1. Suma: 2x = ?", a:["6","4","5","1"], ok:0},
+   {c:"O.7", t:"Resolver un sistema de ecuaciones usando cualquier método", q:"Resuelve: x + y = 10 y x − y = 4.", a:["x=7, y=3","x=3, y=7","x=6, y=4","x=5, y=5"], ok:0}
+ ]},
+ {letter:"P", color:"#0284c7", title:"Monomios y polinomios", skills:[
+   {c:"P.1", t:"Sumar y restar polinomios", q:"(x² + 2x) + (3x) = ?", a:["x² + 5x","x⁵","6x²","4x"], ok:0},
+   {c:"P.2", t:"Sumar polinomios para encontrar el perímetro", q:"Perímetro con lados x, x+2 y 2x.", a:["4x + 2","4x + 2x","3x + 2","4x"], ok:0},
+   {c:"P.3", t:"Multiplicar monomios", q:"3x² · 2x = ?", a:["6x³","6x²","5x³","9x³"], ok:0},
+   {c:"P.4", t:"Dividir monomios", q:"6x⁴ ÷ 2x² = ?", a:["3x²","3x⁶","4x²","8x²"], ok:0},
+   {c:"P.5", t:"Multiplicar y dividir monomios", q:"(2x)(3x²) ÷ x = ?", a:["6x²","6x³","6x","9x²"], ok:0},
+   {c:"P.6", t:"Multiplicar polinomios para encontrar el área", q:"Área de un rectángulo de (x+2) y (x+3).", a:["x² + 5x + 6","x² + 6","2x + 5","x² + 5x + 5"], ok:0}
+ ]},
+ {letter:"Q", color:"#0f766e", title:"Probabilidad y estadística", skills:[
+   {c:"Q.1", t:"Identificar un valor extremo", q:"Datos: 3,5,6,45. ¿Valor atípico?", a:["45","3","6","5"], ok:0},
+   {c:"Q.2", t:"Identificar un valor extremo y describir el efecto de excluirlo", q:"Sin el valor atípico, la media:", a:["Baja","Sube","No cambia","Disminuye a 0"], ok:0},
+   {c:"Q.3", t:"Escribir ecuaciones de rectas de mejor ajuste", q:"La recta de mejor ajuste aproxima los puntos dados.", a:["Ver imagen","No existe","Es horizontal","Es vertical"], ok:0},
+   {c:"Q.4", t:"Probabilidad de eventos simples", q:"Probabilidad de sacar 4 en un dado:", a:["1/6","4/6","1/4","6/1"], ok:0},
+   {c:"Q.5", t:"Probabilidad de eventos contrarios, mutuamente excluyentes y superpuestos", q:"Dos eventos que no pueden ocurrir a la vez son:", a:["Mutuamente excluyentes","Contrarios","Dependientes","Seguros"], ok:0},
+   {c:"Q.6", t:"Encontrar probabilidades usando tablas de frecuencias de dos entradas", q:"Con una tabla de 2×2, la probabilidad condicional se lee:", a:["Ver tabla","Siempre es 1/2","Es 0","No se puede"], ok:0},
+   {c:"Q.7", t:"Eventos compuestos: encontrar el número de resultados posibles", q:"Lanzar una moneda y un dado: ¿cuántos resultados?", a:["12","8","6","2"], ok:0},
+   {c:"Q.8", t:"Eventos compuestos: encontrar el número de sumas posibles", q:"Lanzar dos dados: ¿cuántas formas de sumar 7?", a:["6","7","5","12"], ok:0},
+   {c:"Q.9", t:"Probabilidad de eventos independientes y dependientes", q:"Sacar dos cartas sin reemplazo son eventos:", a:["Dependientes","Independientes","Seguros","Imposibles"], ok:0}
+ ]}
+];
+
+// ---------- Render ----------
+const skillsEl = document.getElementById("skills");
+const gradesEl = document.getElementById("grades");
+const searchEl = document.getElementById("search");
+const rcEl = document.getElementById("rc");
+
+// Selector de grados
+function gradeLabel(g){
+  if (g === "P") return {top:"P", small:"Preescolar"};
+  return {top: g + ".º", small: g + ".º grado"};
+}
+GRADES.forEach(g => {
+  const d = document.createElement("div");
+  d.className = "grade" + (g === "8" ? " sel" : "");
+  d.dataset.grade = g;
+  const L = gradeLabel(g);
+  d.innerHTML = L.top + "<small>" + L.small + "</small>";
+  d.addEventListener("click", () => selectGrade(g));
+  gradesEl.appendChild(d);
+});
+
+// Categorías
+CATS.forEach((cat, ci) => {
+  const section = document.createElement("section");
+  section.className = "cat";
+  section.dataset.letter = cat.letter;
+  section.style.setProperty("--cc", cat.color);
+  section.dataset.title = cat.title.toLowerCase();
+
+  const head = document.createElement("div");
+  head.className = "cat-head";
+  head.innerHTML = '<div class="cat-letter">' + cat.letter + "</div>" +
+    '<h2>' + cat.title + '</h2>' +
+    '<span class="count">' + cat.skills.length + ' competencias</span>';
+  section.appendChild(head);
+
+  const ul = document.createElement("ul");
+  ul.className = "cat-skills";
+
+  cat.skills.forEach(s => {
+    const li = document.createElement("li");
+    li.className = "skill";
+    li.dataset.search = (cat.letter + " " + s.c + " " + s.t).toLowerCase();
+    li.innerHTML =
+      '<div class="skill-code">' + s.c + "</div>" +
+      '<a class="skill-name" href="#" data-c="' + s.c + '">' + s.t + "</a>" +
+      '<span class="hint">Practicar ›</span>' +
+      '<div class="pop">' +
+        '<div class="q-label">Pregunta de ejemplo · ' + s.c + "</div>" +
+        '<div class="q">' + s.q + "</div>" +
+        '<div class="answers">' + s.a.map((ans, i) =>
+          '<div class="ans' + (i === s.ok ? " ok" : "") + '">' + ans + "</div>").join("") +
+        "</div>" +
+        '<div class="caret"></div>' +
+      "</div>";
+    li.__cat = cat;
+    li.__skill = s;
+    ul.appendChild(li);
+  });
+
+  section.appendChild(ul);
+  skillsEl.appendChild(section);
+});
+
+// -------- Utilidades --------
+const modal = document.getElementById("modal");
+const modalTitle = document.getElementById("modalTitle");
+const modalBody = document.getElementById("modalBody");
+const modalFoot = document.getElementById("modalFoot");
+function $$(sel, root){ return Array.from((root || document).querySelectorAll(sel)); }
+function openModal(title, body, foot){
+  modalTitle.textContent = title;
+  modalBody.innerHTML = body;
+  modalFoot.innerHTML = foot || "";
+  modal.classList.add("open");
+}
+function closeModal(){ modal.classList.remove("open"); }
+document.getElementById("modalX").addEventListener("click", closeModal);
+modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+function toast(msg){
+  const wrap = document.getElementById("toasts");
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  wrap.appendChild(t);
+  requestAnimationFrame(() => t.classList.add("show"));
+  setTimeout(() => { t.classList.remove("show"); setTimeout(() => t.remove(), 250); }, 2600);
+}
+
+// -------- Puntuación --------
+let score = {ok:0, total:0};
+try { const raw = JSON.parse(localStorage.getItem("ytc_score")); if (raw && typeof raw.ok === "number") score = raw; } catch(e){}
+function saveScore(){ try { localStorage.setItem("ytc_score", JSON.stringify(score)); } catch(e){} }
+function paintScore(){
+  const txt = score.ok + " / " + score.total;
+  const a = document.getElementById("scorePill"); if (a) a.textContent = txt;
+  const b = document.getElementById("scorePill2"); if (b) b.textContent = txt;
+}
+document.getElementById("resetScore").addEventListener("click", () => {
+  score = {ok:0, total:0}; saveScore(); paintScore(); toast("Puntuación reiniciada");
+});
+paintScore();
+
+// -------- Vistas / navegación --------
+const navLinks = $$(".navlinks a");
+function showView(name){
+  $$(".view").forEach(v => { v.hidden = ("view-" + name) !== v.id; });
+  navLinks.forEach(a => a.classList.toggle("on", a.dataset.view === name));
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+navLinks.forEach(a => a.addEventListener("click", e => { e.preventDefault(); showView(a.dataset.view); }));
+$$("[data-goto]").forEach(b => b.addEventListener("click", () => showView(b.dataset.goto)));
+
+// -------- Selector de grados --------
+function selectGrade(g){
+  $$(".grade").forEach(x => x.classList.toggle("sel", x.dataset.grade === g));
+  if (g === "8"){ showView("math"); toast("Mostrando 8.º grado"); return; }
+  document.getElementById("gradeTitle").textContent = (g === "P" ? "Preescolar" : g + ".º grado");
+  document.getElementById("gradeBig").textContent = (g === "P" ? "P" : g + ".º");
+  showView("grade");
+}
+
+// -------- Práctica (clic en una competencia) --------
+function openPractice(cat, s){
+  const answers = s.a.map((ans, i) => '<button type="button" data-i="' + i + '">' + ans + "</button>").join("");
+  openModal(
+    s.c + " · " + cat.title,
+    '<div class="prac-q">' + s.t + "</div>" +
+    '<div class="prac-sub">' + s.q + "</div>" +
+    '<div class="prac-ans" id="pracAns">' + answers + "</div>" +
+    '<div class="prac-fb" id="pracFb"></div>',
+    '<button class="btn ghost" type="button" id="pracClose">Cerrar</button>' +
+    '<button class="btn solid" type="button" id="pracNext">Siguiente competencia</button>'
+  );
+  document.getElementById("pracClose").addEventListener("click", closeModal);
+  document.getElementById("pracNext").addEventListener("click", () => nextSkill(cat, s));
+  const fb = document.getElementById("pracFb");
+  $$("#pracAns button").forEach(btn => btn.addEventListener("click", () => {
+    const right = Number(btn.dataset.i) === s.ok;
+    score.total++; if (right) score.ok++; saveScore(); paintScore();
+    $$("#pracAns button").forEach((b, i) => {
+      b.disabled = true;
+      if (i === s.ok) b.classList.add("good");
+    });
+    if (!right) btn.classList.add("bad");
+    fb.className = "prac-fb " + (right ? "good" : "bad");
+    fb.textContent = right ? "¡Correcto!" : "Incorrecto. La respuesta correcta está en verde.";
+  }));
+}
+function nextSkill(cat, s){
+  const next = cat.skills[(cat.skills.indexOf(s) + 1) % cat.skills.length];
+  openPractice(cat, next);
+}
+
+// Delegación: clic en cualquier competencia abre la práctica
+skillsEl.addEventListener("click", e => {
+  const li = e.target.closest(".skill");
+  if (!li) return;
+  e.preventDefault();
+  $$(".skill.sel").forEach(x => x !== li && x.classList.remove("sel"));
+  li.classList.add("sel");
+  openPractice(li.__cat, li.__skill);
+});
+
+// -------- Cabecera: login y suscripción --------
+document.getElementById("loginBtn").addEventListener("click", () => {
+  openModal("Iniciar sesión",
+    '<div class="field"><label>Correo</label><input id="lgEmail" type="email" placeholder="tu@correo.com"></div>' +
+    '<div class="field"><label>Contraseña</label><input id="lgPass" type="password" placeholder="••••••••"></div>',
+    '<button class="btn ghost" type="button" id="lgCancel">Cancelar</button>' +
+    '<button class="btn solid" type="button" id="lgOk">Entrar</button>'
+  );
+  document.getElementById("lgCancel").addEventListener("click", closeModal);
+  document.getElementById("lgOk").addEventListener("click", () => {
+    const mail = document.getElementById("lgEmail").value.trim();
+    closeModal();
+    toast(mail ? ("Bienvenido, " + mail) : "Sesión iniciada (demostración)");
+  });
+});
+document.getElementById("subBtn").addEventListener("click", () => {
+  openModal("Elige tu plan",
+    '<div class="plan sel"><div><b>Familiar</b><small>Hasta 6 perfiles</small></div><div class="price">$19<span style="font-size:13px">/mes</span></div></div>' +
+    '<div class="plan"><div><b>Individual</b><small>1 perfil</small></div><div class="price">$9<span style="font-size:13px">/mes</span></div></div>' +
+    '<div class="plan"><div><b>Aula</b><small>Para escuelas</small></div><div class="price">$0<span style="font-size:13px">/demo</span></div></div>',
+    '<button class="btn ghost" type="button" id="subCancel">Cancelar</button>' +
+    '<button class="btn solid" type="button" id="subOk">Continuar</button>'
+  );
+  $$("#modalBody .plan").forEach(p => p.addEventListener("click", () => {
+    $$("#modalBody .plan").forEach(x => x.classList.remove("sel"));
+    p.classList.add("sel");
+  }));
+  document.getElementById("subCancel").addEventListener("click", closeModal);
+  document.getElementById("subOk").addEventListener("click", () => {
+    const sel = document.querySelector("#modalBody .plan.sel b");
+    closeModal();
+    toast("Plan " + (sel ? sel.textContent : "seleccionado") + " (demostración)");
+  });
+});
+
+// -------- Búsqueda --------
+function renderCount() {
+  const q = searchEl.value.trim().toLowerCase();
+  let shown = 0;
+  document.querySelectorAll(".cat").forEach(sec => {
+    let vis = 0;
+    sec.querySelectorAll(".skill").forEach(s => {
+      const ok = !q || s.dataset.search.includes(q) || sec.dataset.title.includes(q) || sec.dataset.letter.toLowerCase() === q;
+      s.style.display = ok ? "" : "none";
+      if (ok) vis++;
+    });
+    sec.style.display = vis ? "" : "none";
+    shown += vis;
+  });
+  rcEl.textContent = shown + " competencias" + (q ? " con \"" + searchEl.value.trim() + "\"" : "") + " en 17 categorías";
+}
+searchEl.addEventListener("input", renderCount);
+renderCount();
+</script>
+</body>
+</html>
