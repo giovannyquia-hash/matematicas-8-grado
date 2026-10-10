@@ -577,7 +577,14 @@ function selectGrade(g){
 
 // -------- Práctica (clic en una competencia) --------
 function openPractice(cat, s){
-  const answers = s.a.map((ans, i) => '<button type="button" data-i="' + i + '">' + ans + "</button>").join("");
+  const order = s.a.map((_, i) => i);
+  for (let i = order.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = order[i]; order[i] = order[j]; order[j] = tmp;
+  }
+  const correctPos = order.indexOf(s.ok);
+  const answers = order.map((orig, pos) =>
+    '<button type="button" data-i="' + pos + '">' + s.a[orig] + "</button>").join("");
   openModal(
     s.c + " · " + cat.title,
     '<div class="prac-q">' + s.t + "</div>" +
@@ -591,11 +598,11 @@ function openPractice(cat, s){
   document.getElementById("pracNext").addEventListener("click", () => nextSkill(cat, s));
   const fb = document.getElementById("pracFb");
   $$("#pracAns button").forEach(btn => btn.addEventListener("click", () => {
-    const right = Number(btn.dataset.i) === s.ok;
+    const right = Number(btn.dataset.i) === correctPos;
     score.total++; if (right) score.ok++; saveScore(); paintScore();
     $$("#pracAns button").forEach((b, i) => {
       b.disabled = true;
-      if (i === s.ok) b.classList.add("good");
+      if (i === correctPos) b.classList.add("good");
     });
     if (!right) btn.classList.add("bad");
     fb.className = "prac-fb " + (right ? "good" : "bad");
